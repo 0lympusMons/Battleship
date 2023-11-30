@@ -132,6 +132,18 @@ class DOM {
       } else {
         cell.classList.remove("hitted");
       }
+
+      // Check if the cell is part of a ship
+      if (showShips) {
+        const key = `${row},${col}`;
+        if (gameState.shipsAndTheirOccupiedSpaces.hasOwnProperty(key)) {
+          // The cell is part of a ship
+          cell.classList.add("ship");
+        } else {
+          // The cell is not part of a ship
+          cell.classList.remove("ship");
+        }
+      }
     });
   }
 
