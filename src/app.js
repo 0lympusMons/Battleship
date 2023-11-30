@@ -22,41 +22,38 @@ start();
 // todo this:WIP
 // DOM.initializeShipsPlacement(playerBoard);
 
+// todo continue here: fix dispaying gameboards
 eventEmitter.on("gameboard click", (board, cell, row, col) => {
   checkForWin();
-  // todo continue here
-
   if (board.id === "enemy") {
     if (dodot.isTheirTurn) {
       let results = enemyBoard.receiveAttack(row, col);
-      // DOM.displayGameboard(enemyBoard, "enemy", false);
-      //display gameboard but hide ships
 
-      //! PROBLEM: ONLY RETURNS TRUE IF HIT SHIP, APIL UNTA WATER
+      //display gameboard but hide ships
+      DOM.displayGameboard(enemyBoard, "enemy", false);
+
       if (results.isASuccessfulHit) {
-        if (results.waterHit) DOM.darkenCell(cell, "dark");
-        if (results.shipHit) DOM.darkenCell(cell, "red");
         switchTurn();
       }
     }
   }
 
-  //enemy's turn, attack
   if (enemy.isTheirTurn) {
-    let result = false;
+    let results = { isASuccessfulHit: false };
+
     do {
       const [row, col] = enemy.generateAttack();
-      const { isASuccessfulHit } = playerBoard.receiveAttack(row, col);
-      result = isASuccessfulHit;
-    } while (!result);
+      results = playerBoard.receiveAttack(row, col);
+    } while (!results.isASuccessfulHit);
 
-    console.log(playerBoard.map);
-    DOM.displayGameboard(playerBoard, "player", true);
     switchTurn();
+
+    DOM.displayGameboard(playerBoard, "player", true);
   }
 });
 
 function checkForWin() {
+  // todo add feature
   //DOM.displayWinner(player);
 
   if (playerBoard.isOver()) {
@@ -65,35 +62,25 @@ function checkForWin() {
     console.log("Player won", playerBoard.map, enemyBoard.map);
   }
 
-  //return winner
   return playerBoard.isOver()
     ? playerBoard.player.name
     : enemyBoard.player.name;
 }
 
 function switchTurn() {
-  //if attack was successful
   dodot.toggleIsTheirTurn();
   enemy.toggleIsTheirTurn();
 
   return dodot.isTheirTurn ? dodot : enemy;
 }
 
-//disable clicks, if not dodot's turn
-// enable again, if yes
-//for every enable/disable check if isOver
-//
-
 // * functions
 
 function start() {
-  // DOM.startGame(enemyBoard);
-
   dodot.isTheirTurn = true;
   enemy.isTheirTurn = false;
 
   DOM.displayGameboard(playerBoard, "player", true);
-  ///// DOM.displayGameboard(enemyBoard, "enemy", false);
   DOM.listenForGameboardClicks();
 }
 
