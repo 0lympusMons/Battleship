@@ -103,38 +103,36 @@ class DOM {
   }
   static saveToGameboard() {}
 
-  static displayGameboard({ map } = gameboard, id, showShips) {
-    // example: document.getElementById("player")
+  static displayGameboard({ map, gameState } = gameboard, id, showShips) {
     const playerBoard = document.getElementById(id);
-    const cells = playerBoard.children;
+    const cells = Array.from(playerBoard.children);
 
-    // Iterate through each cell and update its content
-    for (let row = 0; row < map.length; row++) {
-      for (let col = 0; col < map[row].length; col++) {
-        const cellIndex = row * 10 + col;
-        const cell = cells[cellIndex];
+    cells.forEach((cell) => {
+      const row = parseInt(cell.dataset.row, 10);
+      const col = parseInt(cell.dataset.col, 10);
 
-        // Update cell content based on gameboard value
-        switch (map[row][col]) {
-          case "S":
-            if (showShips) {
-              cell.classList.add("dark");
-              cell.textContent = "S"; // Display 'S' for ships
-            }
-
-            break;
-          case 0:
-            cell.textContent = "0"; // Display '0' for water
-            break;
-          case "X":
-            cell.textContent = "X"; // Display 'X' for hit marks
-            break;
-          // Add more cases for other possible values if needed
-          default:
-            cell.textContent = ""; // Default to empty content
-        }
+      // Check if the cell is a missed square
+      if (
+        gameState.missedSquares.some(
+          ([missedRow, missedCol]) => row === missedRow && col === missedCol
+        )
+      ) {
+        cell.classList.add("missed");
+      } else {
+        cell.classList.remove("missed");
       }
-    }
+
+      // Check if the cell is a hitted square
+      if (
+        gameState.hittedSquares.some(
+          ([hitRow, hitCol]) => row === hitRow && col === hitCol
+        )
+      ) {
+        cell.classList.add("hitted");
+      } else {
+        cell.classList.remove("hitted");
+      }
+    });
   }
 
   static retrieveGameboard() {
