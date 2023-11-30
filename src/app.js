@@ -24,22 +24,21 @@ start();
 
 // todo continue here: fix dispaying gameboards
 eventEmitter.on("gameboard click", (board, cell, row, col) => {
-  checkForWin();
-  if (board.id === "enemy") {
-    if (dodot.isTheirTurn) {
-      let results = enemyBoard.receiveAttack(row, col);
+  if (board.id === "enemy" && dodot.isTheirTurn) {
+    const results = enemyBoard.receiveAttack(row, col);
 
-      //display gameboard but hide ships
-      DOM.displayGameboard(enemyBoard, "enemy", false);
+    // Display gameboard without showing ships
+    DOM.displayGameboard(enemyBoard, "enemy", false);
 
-      if (results.isASuccessfulHit) {
-        switchTurn();
-      }
+    if (results.isASuccessfulHit) {
+      switchTurn();
     }
+
+    checkForWin();
   }
 
   if (enemy.isTheirTurn) {
-    let results = { isASuccessfulHit: false };
+    let results;
 
     do {
       const [row, col] = enemy.generateAttack();
@@ -48,7 +47,9 @@ eventEmitter.on("gameboard click", (board, cell, row, col) => {
 
     switchTurn();
 
+    // Display gameboard with showing ships
     DOM.displayGameboard(playerBoard, "player", true);
+    checkForWin();
   }
 });
 
