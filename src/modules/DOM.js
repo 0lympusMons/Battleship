@@ -23,16 +23,11 @@ class DOM {
     return gameboardDOM;
   }
 
-  // * game states
-
   // 1: ships placement
-  static initializeShipsPlacement(gameboard) {
+  static initializeShipsPlacement(id, gameboard) {
     let isVertical = false;
-    let ship = new Ship("ship", 1);
 
-    // todo: let ship = new Ship("ship", 1);
-    // !                      this
-    DOM.listenForCellClicks("player", (cell) => {
+    DOM.listenForCellEvents("player", "mouseover", (cell) => {
       // get row and col attr of the cell
       const rowValue = cell.dataset.row; // "2"
       const colValue = cell.dataset.col; // "3"
@@ -48,24 +43,109 @@ class DOM {
     //after all 5 ships are placed, remove event listener
   }
 
-  static stopShipsPlacement() {}
+  // todo: fix glowCells not adjusting according to length
+  static glowCells(length, isVertical) {
+    const playerBoard = document.getElementById("player");
+    const cells = Array.from(playerBoard.getElementsByClassName("cell"));
+    let hoveredCells = [];
 
-  // 2: game starting
-  // todo: attack enemy ship
-  /* //// static startGame(enemyBoard) {
-    DOM.listenForCellClicks("enemy", (cell) => {
-      // get row and col attr of the cell
-      const rowValue = cell.dataset.row; // "2"
-      const colValue = cell.dataset.col; // "3"
+    function findCellByDataAttributes(row, col) {
+      return cells.find(
+        (cell) =>
+          cell.dataset.row === row.toString() &&
+          cell.dataset.col === col.toString()
+      );
+    }
 
-      // convert from string to number
-      const rowNumber = parseInt(rowValue, 10); // 2
-      const colNumber = parseInt(colValue, 10); // 3
-
-      enemyBoard.receiveAttack(rowNumber, colNumber);
-      DOM.darkenCell(cell);
+    // Add "mouseover" and "mouseout" event listeners to each cell
+    cells.forEach((cell) => {
+      cell.addEventListener(
+        "mouseover",
+        DOM.#handleMouseOver(event, hoveredCells)
+      );
+      cell.addEventListener("mouseout", DOM.#handleMouseOut(hoveredCells));
     });
-  } */
+  }
+
+  static glowCellsHelper(hoveredCells) {}
+
+  static removeGlowCellsListener() {
+    const playerBoard = document.getElementById("player");
+    const cells = Array.from(playerBoard.getElementsByClassName("cell"));
+
+    // Remove "mouseover" and "mouseout" event listeners from each cell
+    cells.forEach((cell) => {
+      cell.removeEventListener("mouseover", DOM.#handleMouseOver);
+      cell.removeEventListener("mouseout", DOM.#handleMouseOut);
+    });
+  }
+
+  static #handleMouseOver(event, hoveredCells) {
+    // Extract row and col from the dataset of the hovered cell
+    const { row, col } = event.target.dataset;
+
+    // Reset the "dark" class for the previously hovered cells
+    DOM.#resetDarkClass(hoveredCells);
+
+    // Determine varying and constant coordinates based on isVertical
+    const varyingCoord = isVertical ? parseInt(row, 10) : parseInt(col, 10);
+    const constantCoord = isVertical ? parseInt(col, 10) : parseInt(row, 10);
+
+    // Add the "dark" class to the specified range of cells
+    for (let i = varyingCoord; i < varyingCoord + length; i++) {
+      const currentCell = isVertical
+        ? findCellByDataAttributes(i, constantCoord)
+        : findCellByDataAttributes(constantCoord, i);
+
+      if (currentCell) {
+        currentCell.classList.add("dark");
+        hoveredCells.push(currentCell);
+      }
+    }
+  }
+
+  static #handleMouseOut(hoveredCells) {
+    // Reset the "dark" class for the previously hovered cells
+
+    DOM.#resetDarkClass(hoveredCells);
+  }
+
+  static #resetDarkClass(hoveredCells) {
+    hoveredCells.forEach((cell) => {
+      cell.classList.remove("dark");
+    });
+    hoveredCells = [];
+  }
+
+  /* 
+  placeShip([0,0], length, isVertical)
+  */
+  static placeShip(length, coords, isVertical) {
+    const playerBoard = document.getElementById("player");
+    const cells = Array.from(playerBoard.children);
+
+    const [startRow, startCol] = coords;
+
+    for (let i = 0; i < length; i++) {
+      let row = startRow;
+      let col = startCol;
+
+      if (isVertical) {
+        row += i;
+      } else {
+        col += i;
+      }
+
+      const index = row * 10 + col; // Assuming the board is a 10x10 grid
+      const cell = cells[index];
+
+      if (cell) {
+        cell.classList.add("ship");
+      }
+    }
+  }
+
+  static stopShipsPlacement() {}
 
   // Extract the logic to get row and col values from a cell
   static #getRowAndColFromCell(cell) {
@@ -76,32 +156,7 @@ class DOM {
     return { rowNumber, colNumber };
   }
 
-  /*   // Extract the logic for handling cell clicks
-  static #handleCellClick(cell, board) {
-    const { rowNumber, colNumber } = DOM.#getRowAndColFromCell(cell);
-
-   ! CAUSES PROBLEMMS
-    board.receiveAttack(rowNumber, colNumber);
-    DOM.darkenCell(cell);
-  }
-
-  // The main function
-  static startGame(enemyBoard) {
-    // DOM.listenForCellClicks("enemy", (cell) => {
-    //   DOM.#handleCellClick(cell, enemyBoard);
-    // });
-  }
- */
   // * game states ends here
-  /* 
-  placeShip([0,0], length, isVertical)
-  */
-  static placeShip(playerName, ship, coords, isVertical) {
-    // glowGrids();
-    eventEmitter.emit("place ship", playerName, ship, coords, isVertical);
-    DOM.refreshGameboards();
-  }
-  static saveToGameboard() {}
 
   static displayGameboard({ map, gameState } = gameboard, id, showShips) {
     const playerBoard = document.getElementById(id);
@@ -147,14 +202,6 @@ class DOM {
     });
   }
 
-  static retrieveGameboard() {
-    let map;
-    eventEmitter.on("map update", (_map) => (map = _map));
-    return map;
-  }
-
-  static refreshGameboards() {}
-
   static darkenCells(cell, length) {
     // for()
     cell.classList.add("dark");
@@ -175,14 +222,16 @@ class DOM {
 
   // * Event Listeners
   /**
-   * @listenForCellClicks
+   * @listenForCellEvents
    * @param {string} id The id attribute of the gameboard
+   * @param {string} _event The name of the event to listen to
    * */
 
   // Example usage: listenForClicks("playerBoard");
 
-  static listenForCellClicks(
+  static listenForCellEvents(
     id,
+    _event,
     fn = (cell) => {
       console.log(cell);
     }
@@ -191,7 +240,7 @@ class DOM {
     const cells = gameboard.querySelectorAll(".cell");
 
     cells.forEach((cell) => {
-      cell.addEventListener("click", () => {
+      cell.addEventListener(`${_event}`, () => {
         fn(cell);
       });
     });
