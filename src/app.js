@@ -81,7 +81,12 @@ function activateShipsPlacement() {
   eventEmitter.on("gameboard click", hangleShipsPlacement);
 
   const removeEventListener = () => {
-    eventEmitter.removeListener("gameboard click", hangleShipsPlacement);
+    eventEmitter.removeListener("gameboard click", handleShipsPlacement);
+
+    cells.forEach((cell) => {
+      cell.removeEventListener("mouseover", handleMouseOver);
+      cell.removeEventListener("mouseout", handleMouseOut);
+    });
   };
 
   // todo WIP: add hover events
