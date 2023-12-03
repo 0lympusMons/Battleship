@@ -67,8 +67,6 @@ class DOM {
     });
   }
 
-  static glowCellsHelper(hoveredCells) {}
-
   static removeGlowCellsListener() {
     const playerBoard = document.getElementById("player");
     const cells = Array.from(playerBoard.getElementsByClassName("cell"));
