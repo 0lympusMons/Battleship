@@ -148,15 +148,6 @@ class DOM {
   static stopShipsPlacement() {}
 
   // Extract the logic to get row and col values from a cell
-  static #getRowAndColFromCell(cell) {
-    const rowValue = cell.dataset.row;
-    const colValue = cell.dataset.col;
-    const rowNumber = parseInt(rowValue, 10);
-    const colNumber = parseInt(colValue, 10);
-    return { rowNumber, colNumber };
-  }
-
-  // * game states ends here
 
   static displayGameboard({ map, gameState } = gameboard, id, showShips) {
     const playerBoard = document.getElementById(id);
@@ -263,10 +254,22 @@ class DOM {
     addClickEvent(enemyBoard);
   }
 
-  static disableCellClicks(id) {
-    cells.forEach((cell) => {
-      cell.removeEventListener("click");
-    });
+  static #getRowAndColFromCell(cell) {
+    const rowValue = cell.dataset.row;
+    const colValue = cell.dataset.col;
+    const rowNumber = parseInt(rowValue, 10);
+    const colNumber = parseInt(colValue, 10);
+    return { rowNumber, colNumber };
+  }
+
+  static displayInstruction() {}
+
+  static updateInstruction(_shipName, _shipLength) {
+    const shipName = document.getElementById("placing-ships__shipName");
+    shipName.innerText = `Ship: ${_shipName}`;
+
+    const shipLength = document.getElementById("placing-ships__shipLength");
+    shipLength.innerText = `Length: ${_shipLength}`;
   }
 }
 

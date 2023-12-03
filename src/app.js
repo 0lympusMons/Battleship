@@ -12,6 +12,11 @@ let enemy = new AI("enemy");
 let playerBoard = new Gameboard(dodot);
 let enemyBoard = new Gameboard(enemy);
 
+// gameboard methods
+function gameIsOver() {
+  return playerBoard.isOver() || enemyBoard.isOver();
+}
+
 start();
 
 function activateShipsPlacement() {
@@ -31,7 +36,9 @@ function activateShipsPlacement() {
   let currentShip = Carrier; // Start with the Carrier
   let _length = currentShip.length; // for glowGrids
 
-  const hangleShipsPlacement = (board, cell, row, col) => {
+  DOM.updateInstruction(currentShip.name, currentShip.length);
+
+  const handleShipsPlacement = (board, cell, row, col) => {
     if (board.id === "player") {
       const shipSuccessfullyPlaced = playerBoard.placeShip(
         currentShip,
@@ -48,21 +55,25 @@ function activateShipsPlacement() {
           case Carrier:
             currentShip = Battleship;
             _length = currentShip.length;
+            DOM.updateInstruction(currentShip.name, currentShip.length);
 
             break;
           case Battleship:
             currentShip = Cruiser;
             _length = currentShip.length;
+            DOM.updateInstruction(currentShip.name, currentShip.length);
 
             break;
           case Cruiser:
             currentShip = Submarine;
             _length = currentShip.length;
+            DOM.updateInstruction(currentShip.name, currentShip.length);
 
             break;
           case Submarine:
             currentShip = Destroyer;
             _length = currentShip.length;
+            DOM.updateInstruction(currentShip.name, currentShip.length);
 
             break;
           case Destroyer:
@@ -78,7 +89,7 @@ function activateShipsPlacement() {
     }
   };
 
-  eventEmitter.on("gameboard click", hangleShipsPlacement);
+  eventEmitter.on("gameboard click", handleShipsPlacement);
 
   const removeEventListener = () => {
     eventEmitter.removeListener("gameboard click", handleShipsPlacement);
@@ -142,10 +153,6 @@ function activateShipsPlacement() {
   }
 }
 
-function gameIsOver() {
-  return playerBoard.isOver() || enemyBoard.isOver();
-}
-
 function activateGame() {
   //listen for gameboard clicks for attack
   eventEmitter.on("gameboard click", (board, cell, row, col) => {
@@ -184,8 +191,13 @@ function checkForWin() {
   //DOM.displayWinner(player);
 
   if (playerBoard.isOver()) {
+    DOM.announceWinner("You Lost");
+
+    //reveal enemy ships
+    DOM.displayGameboard(enemyBoard, "enemy", false);
     console.log("Player lost", playerBoard.map, enemyBoard.map);
   } else if (enemyBoard.isOver()) {
+    DOM.announceWinner("You Won");
     console.log("Player won", playerBoard.map, enemyBoard.map);
   }
 
@@ -213,6 +225,9 @@ function start() {
   enemyBoard.placeShipsRandomly();
 
   eventEmitter.on("done ships placement", () => {
+    document.getElementById("enemy").classList.remove("hide");
+    document.getElementById("placing-ships").classList.add("hide");
+
     activateGame();
   });
 }
