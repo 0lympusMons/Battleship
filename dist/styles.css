@@ -160,4 +160,16 @@ footer a {
 }
 footer a i {
   font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .gameboard__wrapper {
+    transform: scale(90%);
+  }
+  header {
+    height: 95px;
+  }
+  footer {
+    padding: 1rem 0;
+  }
 }/*# sourceMappingURL=styles.css.map */
