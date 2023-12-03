@@ -137,10 +137,14 @@ function activateShipsPlacement() {
   }
 }
 
+function gameIsOver() {
+  return playerBoard.isOver() || enemyBoard.isOver();
+}
+
 function activateGame() {
   //listen for gameboard clicks for attack
   eventEmitter.on("gameboard click", (board, cell, row, col) => {
-    if (board.id === "enemy" && dodot.isTheirTurn) {
+    if (board.id === "enemy" && dodot.isTheirTurn && !gameIsOver()) {
       const results = enemyBoard.receiveAttack(row, col);
 
       // Display gameboard without showing ships
@@ -153,7 +157,7 @@ function activateGame() {
       checkForWin();
     }
 
-    if (enemy.isTheirTurn) {
+    if (enemy.isTheirTurn && !gameIsOver()) {
       let results;
 
       do {
@@ -197,7 +201,7 @@ function start() {
   enemy.isTheirTurn = false;
 
   DOM.displayGameboard(playerBoard, "player", true);
-  DOM.listenForGameboardClicks();
+  DOM.listenForGameboardClicks(); //async, activate event emitter
 
   //position ships
   activateShipsPlacement();
