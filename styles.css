@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Caprasimo&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap");
+:root {
+  --color-1: #8ca0ff;
+  --color-2: #6270b4;
+  --color-2-darker: #4a5589;
+  --color-3: #00567d;
+  --color-4: #b46262;
+  --Belaosima: "Belanosima", sans-serif;
+  --Belaosima--regular: 400;
+  --Belaosima--SemiBold: 600;
+  --Belaosima--Bold: 700;
+  --shadow: rgb(0 0 0 / 23%) 6px 15px 25px;
+  --gameboard-border: 1px solid rgb(34, 34, 34);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  height: 100%;
+  font-family: var(--Belaosima);
+}
+
+header h1 {
+  text-align: center;
+  padding: 2rem;
+  font-size: 4rem;
+}
+
+.gameboard__wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.gameboard {
+  flex-shrink: 0;
+  display: grid;
+  width: 20rem;
+  height: 20rem;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  border: var(--gameboard-border);
+}
+
+.hide {
+  display: none !important;
+}
+
+#placing-ships {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 20rem;
+  height: 20rem;
+  border: 2px solid rgb(34, 34, 34);
+  padding-bottom: 1rem;
+}
+#placing-ships p {
+  font-size: 100%;
+  padding: 0.5rem;
+}
+#placing-ships p#placing-ships__instruction {
+  background-color: var(--color-1);
+  font-weight: var(--Belaosima--SemiBold);
+  border-bottom: 2px solid black;
+}
+#placing-ships button {
+  margin-left: 1rem;
+  align-self: flex-start;
+  padding: 0.5rem 2rem;
+  margin-top: auto;
+  background-color: #8ca0ff;
+  border: none;
+  cursor: pointer;
+  font-family: var(--Belaosima);
+  font-size: 80%;
+  font-weight: var(--Belaosima--SemiBold);
+}
+
+.gameboard > div {
+  background-color: var(--color-1);
+  border: 1px black solid;
+}
+
+.cell:hover {
+  background-color: var(--color-2);
+  transition: 0.2s;
+}
+.cell.dark, .cell.missed {
+  background-color: var(--color-2);
+  transition: 0.2s;
+}
+.cell.ship {
+  background-color: var(--color-3);
+  transition: 0.2s;
+}
+.cell.hitted {
+  background-color: var(--color-4);
+  transition: 0.2s;
+}
+
+.modal__bg {
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(82, 82, 82, 0.6235294118);
+  height: 100%;
+  width: 100%;
+}
+
+.modal__bg .modal {
+  font-size: 32px;
+  font-weight: var(--Belaosima--Bold);
+  color: black;
+  text-shadow: var(--shadow);
+}
+
+.button__wrapper button {
+  margin-top: 32px;
+  font-size: 32px;
+  border-radius: 10px;
+  padding: 8px 16px;
+  border: none;
+  background-color: var(--color-1);
+  color: var(--color-2-darker);
+  font-family: var(--Belaosima);
+  font-weight: var(--Belaosima--Bold);
+  box-shadow: var(--shadow);
+  transition: 0.3s;
+}
+
+.button__wrapper button:hover {
+  background-color: var(--color-2-darker);
+  color: var(--color-1);
+  transition: 0.3s;
+}
+
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+  padding: 2rem 0rem;
+}
+footer a {
+  text-decoration: none;
+  color: var(--dark-brown-color);
+  font-weight: var(--Belaosima--SemiBold);
+}
+footer a i {
+  font-size: 1rem;
+}/*# sourceMappingURL=styles.css.map */
