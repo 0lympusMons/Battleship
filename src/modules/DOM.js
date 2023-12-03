@@ -271,13 +271,21 @@ class DOM {
     const shipLength = document.getElementById("placing-ships__shipLength");
     shipLength.innerText = `Length: ${_shipLength}`;
   }
+
+  //TODO: WIP
+  static announceWinner(results) {
+    let modalBackground = document.querySelector(".modal__bg");
+    let winnerText = document.querySelector(".winner__text");
+
+    let restartButton = document.getElementById("restart__button--modal");
+    restartButton.onclick = () => {
+      location.reload();
+    };
+
+    modalBackground.style.display = "flex";
+
+    winnerText.innerText = results;
+  }
 }
-
-/* 
-todo 
-sulayi dula
-
-then, implement placeShip
-*/
 
 export default DOM;
