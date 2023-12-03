@@ -6,12 +6,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="modal__bg">
+      <div class="modal">
+        <h2 class="winner__text"></h2>
+      </div>
+
+      <div class="button__wrapper">
+        <button id="restart__button--modal">Restart</button>
+      </div>
+    </div>
     <header>
       <h1>Battleship</h1>
     </header>
     <div id="app">
-
-      <button id="rotateButton">Rotate</button>
       <div class="gameboard__wrapper">
         <div class="gameboard" id="player">
           <div class="cell" data-row="0" data-col="0"></div>
@@ -115,8 +122,8 @@
           <div class="cell" data-row="9" data-col="8"></div>
           <div class="cell" data-row="9" data-col="9"></div>
         </div>
-        
-        <div class="gameboard" id="enemy">
+
+        <div class="gameboard hide" id="enemy">
           <div class="cell" data-row="0" data-col="0"></div>
           <div class="cell" data-row="0" data-col="1"></div>
           <div class="cell" data-row="0" data-col="2"></div>
@@ -217,6 +224,15 @@
           <div class="cell" data-row="9" data-col="7"></div>
           <div class="cell" data-row="9" data-col="8"></div>
           <div class="cell" data-row="9" data-col="9"></div>
+        </div>
+
+        <div class="gameboard" id="placing-ships">
+          <p id="placing-ships__instruction">START PLACING YOUR SHIPS</p>
+          <p id="placing-ships__shipName">Ship: Carrier</p>
+          <p id="placing-ships__shipLength">Length: 5</p>
+          <button id="rotateButton">Rotate</button>
+
+
         </div>
       </div>
     </div>
