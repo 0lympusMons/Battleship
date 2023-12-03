@@ -4,46 +4,32 @@ import { Player, AI } from "./modules/Player";
 import DOM from "./modules/DOM";
 import eventEmitter from "./modules/Events";
 
-// make boards
-
+// create players
 let dodot = new Player("Dodot");
 let enemy = new AI("enemy");
 
+// make boards
 let playerBoard = new Gameboard(dodot);
 let enemyBoard = new Gameboard(enemy);
 
-//position ships
-
-// playerBoard.placeShipsRandomly();
-enemyBoard.placeShipsRandomly();
-
 start();
 
-// todo this:WIP
-
-//DOM.initializeShipsPlacement(gameboard ID,playerBoard   );
-// DOM.initializeShipsPlacement(playerBoard);
-// 1. DOM placement: //* DOM.placeSHip()
-// 2. check if DOM placement is possible: //* playerBoard.placeShip(Carrier, [row, col] = coord, isVertical)
-// 3. if not, DOM placement
-
-activateShipsPlacement();
-
 function activateShipsPlacement() {
-  const Carrier = new Ship("Carrier", 5);
-  const Battleship = new Ship("Battleship", 4);
-  const Cruiser = new Ship("Cruiser", 3);
-  const Submarine = new Ship("Submarine", 3);
-  const Destroyer = new Ship("Destroyer", 2);
-  let _length = 5;
-
+  // handle isVertical
   let isVertical = false;
   const rotateButton = document.getElementById("rotateButton");
   rotateButton.onclick = () => {
     isVertical = isVertical == true ? false : true;
   };
 
+  const Carrier = new Ship("Carrier", 5);
+  const Battleship = new Ship("Battleship", 4);
+  const Cruiser = new Ship("Cruiser", 3);
+  const Submarine = new Ship("Submarine", 3);
+  const Destroyer = new Ship("Destroyer", 2);
+
   let currentShip = Carrier; // Start with the Carrier
+  let _length = currentShip.length; // for glowGrids
 
   const hangleShipsPlacement = (board, cell, row, col) => {
     if (board.id === "player") {
@@ -82,26 +68,17 @@ function activateShipsPlacement() {
           case Destroyer:
             // All ships are placed, remove the event listener
             removeEventListener();
+            eventEmitter.emit("done ships placement");
             DOM.displayGameboard(playerBoard, "player", true);
             break;
           default:
             break;
         }
-
-        // Update the glowing cells with the new ship's length
-        // !
-        /*         DOM.removeGlowCellsListener();
-        DOM.glowCells(currentShip.length, false); */
       }
     }
   };
 
   eventEmitter.on("gameboard click", hangleShipsPlacement);
-
-  // Initial glowing cells with the length of the first ship
-  // !
-
-  // DOM.glowCells(currentShip.length, false);
 
   const removeEventListener = () => {
     eventEmitter.removeListener("gameboard click", hangleShipsPlacement);
@@ -121,13 +98,8 @@ function activateShipsPlacement() {
     // Extract row and col from the dataset of the hovered cell
     const { row, col } = event.target.dataset;
     console.log(row, col);
-    // Reset the "dark" class for the previously hovered cells
-    // //resetDarkClass(hoveredCells);
 
     // Determine varying and constant coordinates based on isVertical
-
-    //! const isVertical = true;
-
     const varyingCoord = isVertical ? parseInt(row, 10) : parseInt(col, 10);
     const constantCoord = isVertical ? parseInt(col, 10) : parseInt(row, 10);
 
@@ -165,8 +137,8 @@ function activateShipsPlacement() {
   }
 }
 
-activateGame();
 function activateGame() {
+  //listen for gameboard clicks for attack
   eventEmitter.on("gameboard click", (board, cell, row, col) => {
     if (board.id === "enemy" && dodot.isTheirTurn) {
       const results = enemyBoard.receiveAttack(row, col);
@@ -226,4 +198,12 @@ function start() {
 
   DOM.displayGameboard(playerBoard, "player", true);
   DOM.listenForGameboardClicks();
+
+  //position ships
+  activateShipsPlacement();
+  enemyBoard.placeShipsRandomly();
+
+  eventEmitter.on("done ships placement", () => {
+    activateGame();
+  });
 }
