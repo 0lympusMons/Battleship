@@ -1,7 +1,9 @@
 
 .cache/
 coverage/
-dist/*
+
+dist/styles.scss
+dist/styles.css.map
 !dist/index.html
 node_modules/
 *.log
