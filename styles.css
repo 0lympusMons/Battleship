@@ -117,6 +117,7 @@ header h1 {
   background-color: rgba(82, 82, 82, 0.6235294118);
   height: 100%;
   width: 100%;
+  z-index: 100;
 }
 
 .modal__bg .modal {
